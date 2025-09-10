@@ -1,0 +1,507 @@
+{
+	"stim": [
+		{
+			"trial": 1,
+			"image": "hole1_world2"
+		},
+		{
+			"trial": 2,
+			"image": "hole1_world6"
+		},
+		{
+			"trial": 3,
+			"image": "hole1_world9"
+		},
+		{
+			"trial": 4,
+			"image": "hole1_world10"
+		},
+		{
+			"trial": 5,
+			"image": "hole1_world12"
+		},
+		{
+			"trial": 6,
+			"image": "hole1_world13"
+		},
+		{
+			"trial": 7,
+			"image": "hole1_world14"
+		},
+		{
+			"trial": 8,
+			"image": "hole1_world16"
+		},
+		{
+			"trial": 9,
+			"image": "hole1_world20"
+		},
+		{
+			"trial": 10,
+			"image": "hole1_world26"
+		},
+		{
+			"trial": 11,
+			"image": "hole1_world27"
+		},
+		{
+			"trial": 12,
+			"image": "hole1_world32"
+		},
+		{
+			"trial": 13,
+			"image": "hole1_world38"
+		},
+		{
+			"trial": 14,
+			"image": "hole1_world42"
+		},
+		{
+			"trial": 15,
+			"image": "hole1_world45"
+		},
+		{
+			"trial": 16,
+			"image": "hole1_world47"
+		},
+		{
+			"trial": 17,
+			"image": "hole1_world48"
+		},
+		{
+			"trial": 18,
+			"image": "hole1_world50"
+		},
+		{
+			"trial": 19,
+			"image": "hole1_world56"
+		},
+		{
+			"trial": 20,
+			"image": "hole1_world59"
+		},
+		{
+			"trial": 21,
+			"image": "hole1_world62"
+		},
+		{
+			"trial": 22,
+			"image": "hole1_world70"
+		},
+		{
+			"trial": 23,
+			"image": "hole1_world74"
+		},
+		{
+			"trial": 24,
+			"image": "hole1_world80"
+		},
+		{
+			"trial": 25,
+			"image": "hole1_world82"
+		},
+		{
+			"trial": 26,
+			"image": "hole1_world84"
+		},
+		{
+			"trial": 27,
+			"image": "hole1_world86"
+		},
+		{
+			"trial": 28,
+			"image": "hole1_world90"
+		},
+		{
+			"trial": 29,
+			"image": "hole1_world91"
+		},
+		{
+			"trial": 30,
+			"image": "hole1_world92"
+		},
+		{
+			"trial": 31,
+			"image": "hole1_world94"
+		},
+		{
+			"trial": 32,
+			"image": "hole1_world99"
+		},
+		{
+			"trial": 33,
+			"image": "hole1_world104"
+		},
+		{
+			"trial": 34,
+			"image": "hole1_world105"
+		},
+		{
+			"trial": 35,
+			"image": "hole1_world109"
+		},
+		{
+			"trial": 36,
+			"image": "hole1_world111"
+		},
+		{
+			"trial": 37,
+			"image": "hole1_world112"
+		},
+		{
+			"trial": 38,
+			"image": "hole1_world113"
+		},
+		{
+			"trial": 39,
+			"image": "hole1_world115"
+		},
+		{
+			"trial": 40,
+			"image": "hole1_world118"
+		},
+		{
+			"trial": 41,
+			"image": "hole2_world2"
+		},
+		{
+			"trial": 42,
+			"image": "hole2_world6"
+		},
+		{
+			"trial": 43,
+			"image": "hole2_world9"
+		},
+		{
+			"trial": 44,
+			"image": "hole2_world10"
+		},
+		{
+			"trial": 45,
+			"image": "hole2_world12"
+		},
+		{
+			"trial": 46,
+			"image": "hole2_world13"
+		},
+		{
+			"trial": 47,
+			"image": "hole2_world14"
+		},
+		{
+			"trial": 48,
+			"image": "hole2_world16"
+		},
+		{
+			"trial": 49,
+			"image": "hole2_world20"
+		},
+		{
+			"trial": 50,
+			"image": "hole2_world26"
+		},
+		{
+			"trial": 51,
+			"image": "hole2_world27"
+		},
+		{
+			"trial": 52,
+			"image": "hole2_world32"
+		},
+		{
+			"trial": 53,
+			"image": "hole2_world38"
+		},
+		{
+			"trial": 54,
+			"image": "hole2_world42"
+		},
+		{
+			"trial": 55,
+			"image": "hole2_world45"
+		},
+		{
+			"trial": 56,
+			"image": "hole2_world47"
+		},
+		{
+			"trial": 57,
+			"image": "hole2_world48"
+		},
+		{
+			"trial": 58,
+			"image": "hole2_world50"
+		},
+		{
+			"trial": 59,
+			"image": "hole2_world56"
+		},
+		{
+			"trial": 60,
+			"image": "hole2_world59"
+		},
+		{
+			"trial": 61,
+			"image": "hole2_world62"
+		},
+		{
+			"trial": 62,
+			"image": "hole2_world70"
+		},
+		{
+			"trial": 63,
+			"image": "hole2_world74"
+		},
+		{
+			"trial": 64,
+			"image": "hole2_world80"
+		},
+		{
+			"trial": 65,
+			"image": "hole2_world82"
+		},
+		{
+			"trial": 66,
+			"image": "hole2_world84"
+		},
+		{
+			"trial": 67,
+			"image": "hole2_world86"
+		},
+		{
+			"trial": 68,
+			"image": "hole2_world90"
+		},
+		{
+			"trial": 69,
+			"image": "hole2_world91"
+		},
+		{
+			"trial": 70,
+			"image": "hole2_world92"
+		},
+		{
+			"trial": 71,
+			"image": "hole2_world94"
+		},
+		{
+			"trial": 72,
+			"image": "hole2_world99"
+		},
+		{
+			"trial": 73,
+			"image": "hole2_world104"
+		},
+		{
+			"trial": 74,
+			"image": "hole2_world105"
+		},
+		{
+			"trial": 75,
+			"image": "hole2_world109"
+		},
+		{
+			"trial": 76,
+			"image": "hole2_world111"
+		},
+		{
+			"trial": 77,
+			"image": "hole2_world112"
+		},
+		{
+			"trial": 78,
+			"image": "hole2_world113"
+		},
+		{
+			"trial": 79,
+			"image": "hole2_world115"
+		},
+		{
+			"trial": 80,
+			"image": "hole2_world118"
+		},
+		{
+			"trial": 81,
+			"image": "hole3_world2"
+		},
+		{
+			"trial": 82,
+			"image": "hole3_world6"
+		},
+		{
+			"trial": 83,
+			"image": "hole3_world9"
+		},
+		{
+			"trial": 84,
+			"image": "hole3_world10"
+		},
+		{
+			"trial": 85,
+			"image": "hole3_world12"
+		},
+		{
+			"trial": 86,
+			"image": "hole3_world13"
+		},
+		{
+			"trial": 87,
+			"image": "hole3_world14"
+		},
+		{
+			"trial": 88,
+			"image": "hole3_world16"
+		},
+		{
+			"trial": 89,
+			"image": "hole3_world20"
+		},
+		{
+			"trial": 90,
+			"image": "hole3_world26"
+		},
+		{
+			"trial": 91,
+			"image": "hole3_world27"
+		},
+		{
+			"trial": 92,
+			"image": "hole3_world32"
+		},
+		{
+			"trial": 93,
+			"image": "hole3_world38"
+		},
+		{
+			"trial": 94,
+			"image": "hole3_world42"
+		},
+		{
+			"trial": 95,
+			"image": "hole3_world45"
+		},
+		{
+			"trial": 96,
+			"image": "hole3_world47"
+		},
+		{
+			"trial": 97,
+			"image": "hole3_world48"
+		},
+		{
+			"trial": 98,
+			"image": "hole3_world50"
+		},
+		{
+			"trial": 99,
+			"image": "hole3_world56"
+		},
+		{
+			"trial": 100,
+			"image": "hole3_world59"
+		},
+		{
+			"trial": 101,
+			"image": "hole3_world62"
+		},
+		{
+			"trial": 102,
+			"image": "hole3_world70"
+		},
+		{
+			"trial": 103,
+			"image": "hole3_world74"
+		},
+		{
+			"trial": 104,
+			"image": "hole3_world80"
+		},
+		{
+			"trial": 105,
+			"image": "hole3_world82"
+		},
+		{
+			"trial": 106,
+			"image": "hole3_world84"
+		},
+		{
+			"trial": 107,
+			"image": "hole3_world86"
+		},
+		{
+			"trial": 108,
+			"image": "hole3_world90"
+		},
+		{
+			"trial": 109,
+			"image": "hole3_world91"
+		},
+		{
+			"trial": 110,
+			"image": "hole3_world92"
+		},
+		{
+			"trial": 111,
+			"image": "hole3_world94"
+		},
+		{
+			"trial": 112,
+			"image": "hole3_world99"
+		},
+		{
+			"trial": 113,
+			"image": "hole3_world104"
+		},
+		{
+			"trial": 114,
+			"image": "hole3_world105"
+		},
+		{
+			"trial": 115,
+			"image": "hole3_world109"
+		},
+		{
+			"trial": 116,
+			"image": "hole3_world111"
+		},
+		{
+			"trial": 117,
+			"image": "hole3_world112"
+		},
+		{
+			"trial": 118,
+			"image": "hole3_world113"
+		},
+		{
+			"trial": 119,
+			"image": "hole3_world115"
+		},
+		{
+			"trial": 120,
+			"image": "hole3_world118"
+		},
+		{
+			"trial": 121,
+			"image": "hole1_world43"
+		},
+		{
+			"trial": 122,
+			"image": "hole3_world76"
+		}
+	],
+	"videos": [
+		{
+			"video": "ball_world15"
+		},
+		{
+			"video": "ball_world26"
+		},
+		{
+			"video": "ball_world63"
+		},
+		{
+			"video": "ball_world79"
+		}
+	],
+	"question": "<p><b>Where do you think the ball will end up?</b></p> <p>Please click <b>10 times</b> to indicate. You can click on the same spot multiple times to indicate that you're confident where it will land.</p><p>Please don't resize the window or change the zoom level of your browser!</p>"
+}

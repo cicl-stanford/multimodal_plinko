@@ -1,0 +1,518 @@
+---
+title: "Figure Plotting"
+author: "Ari Beller"
+date: "2025-08-21"
+output: html_document
+---
+
+# Libraries
+
+```{r}
+library("knitr")
+library("DBI")
+library("RSQLite")
+library("jsonlite")
+library("Metrics")
+library("ggh4x")
+library("ggnewscale")
+library("scales")
+library("broom")
+library("tidyverse")
+```
+
+```{r}
+# Set theme to classic
+theme_set(theme_classic())
+```
+
+```{r}
+custom_colors = c(
+  rgb(17, 119, 51, maxColorValue = 255), # green
+  rgb(136, 204, 238, maxColorValue = 255), # light blue
+  rgb(170, 68, 153, maxColorValue = 255) # magenta
+)
+```
+
+
+# Prediction
+
+## Demographics
+
+### Load DF
+```{r}
+
+data_path = "../../data/human_data/prediction/experiment_2.db"
+
+con = dbConnect(RSQLite::SQLite(), data_path)
+
+tables = dbListTables(con)
+
+df = dbGetQuery(con, "SELECT * FROM plinko")
+
+dbDisconnect(con)
+
+```
+
+
+```{r}
+df_pred_demo = df %>% 
+  filter(mode == "live",
+         status >= 3,
+         codeversion == "experiment_2") %>% 
+  mutate(part_num = seq(1, nrow(.)),
+         data_json = map(.x = datastring,
+                         .f = fromJSON),
+         question_data = map(.x = data_json,
+                             .f = ~ .$questiondata),
+         gender = as.character(map(.x = question_data,
+                                   .f = ~ .$sex)),
+         age = as.numeric(map(.x = question_data,
+                              .f = ~ .$age))) %>% 
+  select(part_num, gender, age)
+```
+
+### Age
+```{r}
+df_pred_demo %>% summarise(mean_age = round(mean(age)),
+                           sd_age = round(sd(age)))
+```
+
+### Gender
+```{r}
+# Count the number of times male and female appear in the gender column of df_pred_demo
+df_pred_demo %>% count(gender)
+```
+
+
+## Noisy Simulator Performance
+
+```{r}
+
+df_human_means = read.csv("../python/prediction/human_mean_ci.csv") %>% 
+  rename(human_mean = mean_response)
+df_sim_means = read.csv("../python/prediction/saved_model_pred/noisy_sim_mean.csv") %>% 
+  rename(sim_mean = mean)
+
+df_model_data = df_human_means %>% 
+  left_join(df_sim_means,
+            by = c("world", "hole")) %>% 
+  mutate(hole = as.factor(hole))
+
+```
+
+```{r fig.width=3, fig.height=3}
+
+df_sum_stat = df_model_data %>% 
+  summarise(r = round(cor(sim_mean, human_mean), 2),
+            rmse = round(sqrt(mean((sim_mean - human_mean)^2)), 2))
+
+df_emph_trial = df_model_data %>% 
+  filter(world == 70)
+
+ggplot(data=df_model_data,
+       mapping = aes(x = sim_mean,
+                     y = human_mean)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  geom_linerange(mapping = aes(ymin = ci_lower,
+                               ymax = ci_upper)) +
+  geom_point(mapping=aes(fill=hole),
+             shape=21,
+             color="black",
+             size=1) +
+  geom_point(data = df_emph_trial,
+             mapping = aes(fill=hole),
+             shape=23,
+             color="black",
+             size=3) +
+  geom_text(data = df_sum_stat,
+            mapping = aes(x = 0, y = 580, label = paste("r = ", r)),
+            hjust=0,
+            size = 4) +
+  geom_text(data = df_sum_stat,
+            mapping = aes(x = 0, y = 540, label = paste("RMSE = ", rmse)),
+            hjust=0,
+            size = 4) +
+  scale_fill_manual(values = custom_colors) +
+  scale_x_continuous(breaks = c(0, 200, 400, 600),
+                     labels = function(x) paste0(x, "px"),
+                     limits = c(0,600)) + 
+  scale_y_continuous(breaks = c(0, 200, 400, 600),
+                     labels = function(x) paste0(x, "px"),
+                     limits=c(0,600)) +
+  labs(x = "Simulator Mean Prediction",
+       y = "Human Mean Prediction") +
+  theme(legend.position = "none",
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+
+ggsave("figures/prediction_noisy_sim_scatter.pdf",
+       width = 3,
+       height = 3.5)
+  
+```
+# Inference
+
+## Judgment
+
+### Load Data and Models
+
+```{r}
+df_human_judgment_vision = read.csv("../../data/human_data/inference/vision_judge_summary_rt_cleaned.csv")
+df_human_judgment_audio = read.csv("../../data/human_data/inference/audio_judge_summary_rt_cleaned.csv")
+df_human_judgment_occluded = read.csv("../../data/human_data/inference/occluded_judge_summary_rt_cleaned.csv")
+
+df_sequential_judgment_vision = read.csv("../python/inference/model_performance/top_models/sequential_top_vision_judgment.csv")
+df_sequential_judgment_audio = read.csv("../python/inference/model_performance/top_models/sequential_top_audio_judgment.csv")
+df_sequential_judgment_occluded = read.csv("../python/inference/model_performance/top_models/sequential_top_occluded_judgment.csv")
+
+df_uniform_judgment_vision = read.csv("../python/inference/model_performance/top_models/uniform_top_vision_judgment.csv")
+df_uniform_judgment_audio = read.csv("../python/inference/model_performance/top_models/uniform_top_audio_judgment.csv")
+df_uniform_judgment_occluded = read.csv("../python/inference/model_performance/top_models/uniform_top_occluded_judgment.csv")
+
+df_comp_sequential_judgment_vision = df_human_judgment_vision %>%
+  left_join(df_sequential_judgment_vision,
+            by = c("trial", "hole")) %>% 
+  mutate("condition" = "vision")
+
+df_comp_sequential_judgment_audio = df_human_judgment_audio %>%
+  left_join(df_sequential_judgment_audio,
+            by = c("trial", "hole")) %>% 
+  mutate("condition" = "audio")
+
+df_comp_sequential_judgment_occluded = df_human_judgment_occluded %>%
+  left_join(df_sequential_judgment_occluded,
+            by = c("trial", "hole")) %>% 
+  mutate("condition" = "occluded")
+
+df_comp_sequential_judgment = bind_rows(df_comp_sequential_judgment_vision,
+                                    df_comp_sequential_judgment_audio,
+                                    df_comp_sequential_judgment_occluded) %>%
+  mutate(hole = as.factor(hole),
+         condition = factor(condition,
+                            levels=c("vision", "audio", "occluded"),
+                            labels=c("No Sound + Ball Visible", "Sound + Ball Visible", "Sound + Ball Occluded")),
+         Model = "Sequential Sampler")
+
+df_comp_uniform_judgment_vision = df_human_judgment_vision %>%
+  left_join(df_uniform_judgment_vision,
+            by = c("trial", "hole")) %>%
+  mutate("condition" = "vision")
+
+df_comp_uniform_judgment_audio = df_human_judgment_audio %>%
+  left_join(df_uniform_judgment_audio,
+            by = c("trial", "hole")) %>%
+  mutate("condition" = "audio")
+
+df_comp_uniform_judgment_occluded = df_human_judgment_occluded %>%
+  left_join(df_uniform_judgment_occluded,
+            by = c("trial", "hole")) %>%
+  mutate("condition" = "occluded")
+
+df_comp_uniform_judgment = bind_rows(df_comp_uniform_judgment_vision,
+                                     df_comp_uniform_judgment_audio,
+                                     df_comp_uniform_judgment_occluded) %>%
+  mutate(hole = as.factor(hole),
+         condition = factor(condition,
+                            levels=c("vision", "audio", "occluded"),
+                            labels=c("No Sound + Ball Visible", "Sound + Ball Visible", "Sound + Ball Occluded")),
+         Model = "Uniform Sampler")
+```
+
+### Visualize Judgment Comparison
+
+```{r fig.width=20, fig.height=9}
+
+df_to_show = rbind(
+  df_comp_sequential_judgment,
+  df_comp_uniform_judgment
+)
+
+df_metrics = df_to_show %>% 
+  mutate(model_y = model_y*100,
+         data_y = data_y*100) %>% 
+  group_by(condition, Model) %>% 
+  summarise(r = round(cor(model_y, data_y), 2),
+            rmse = round(rmse(data_y, model_y), 2))
+
+condition_colors = c("tomato2", "darkorange2", "gold2")
+
+ggplot(data=df_to_show,
+       mapping = aes(x = model_y,
+                     y = data_y)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  geom_linerange(mapping = aes(ymin = lower,
+                               ymax = upper),
+                 color = "black",
+                 alpha=0.2) +
+  geom_point(mapping = aes(fill=hole),
+             shape=21,
+             color="black") +
+  geom_text(data = df_metrics,
+            mapping = aes(x = 0, y = 1, label = paste("r = ", r)),
+            hjust=0,
+            size = 6) +
+  geom_text(data = df_metrics,
+            mapping = aes(x = 0, y = 0.92, label = paste("RMSE = ", rmse)),
+            hjust=0,
+            size = 6) +
+  facet_grid2(Model ~ condition,
+              strip = strip_themed(
+                background_x = list(
+                  element_rect(fill = condition_colors[1]),
+                  element_rect(fill = condition_colors[2]),
+                  element_rect(fill = condition_colors[3])
+                ))) +
+  scale_fill_manual(values = custom_colors) +
+  scale_x_continuous(labels = percent_format(accuracy = 1)) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) + 
+  labs(x = "Precentage Predicted",
+       y = "Percentage Selected") +
+  theme(legend.position = "none",
+        axis.text = element_text(size = 22),
+        axis.title = element_text(size = 26),
+        strip.text = element_text(size = 26),
+        panel.spacing.x=unit(2, "cm"),
+        panel.spacing.y=unit(1, "cm"))
+
+ggsave("figures/judgment_combined.pdf",
+       width = 20,
+       height = 9)
+
+```
+### Sample Trials
+
+```{r}
+df_human_judgment = rbind(
+  df_human_judgment_vision %>% 
+    mutate(condition = "vision"),
+  df_human_judgment_audio %>%
+    mutate(condition = "audio"),
+  df_human_judgment_occluded %>%
+    mutate(condition = "occluded")
+)
+
+df_human_judgment %>% 
+  filter(trial == 1) %>% 
+  mutate(percent = round(data_y*100))
+```
+
+```{r}
+plot_trial_bar = function(df_human_judgment, trial_id, cond) {
+  
+  color_map = c("vision" = "tomato2",
+                 "audio" = "darkorange2",
+                 "occluded" = "gold2")
+  
+  df_to_show = df_human_judgment %>% 
+    filter(trial == trial_id,
+           condition == cond) %>% 
+    mutate(hole = factor(hole,
+                         levels = c(0,1,2),
+                         labels = c(1,2,3)))
+  
+  ggplot(data = df_to_show,
+         mapping = aes(x = hole,
+                       y = data_y)) +
+    geom_bar(stat = "identity",
+             fill = color_map[cond],
+             color = "black",
+             alpha = 0.7) +
+    geom_linerange(mapping = aes(ymin = lower,
+                                 ymax = upper),
+                   color = "black") +
+    xlab("Hole") +
+    scale_x_discrete(labels=c("1", "2", "3")) +
+    ylab(NULL) +
+    scale_y_continuous(labels = percent_format(),
+                       limits = c(0,1)) +
+    theme(axis.text = element_text(size = 22),
+          axis.title = element_text(size = 26))
+}
+```
+
+```{r fig.height=4, fig.width=5}
+plot_trial_bar(df_human_judgment, 78, "vision")
+```
+
+```{r fig.height=4, fig.width=5}
+plot_trial_bar(df_human_judgment, 78, "audio")
+```
+
+```{r fig.height=4, fig.width=5}
+plot_trial_bar(df_human_judgment, 78, "occluded")
+```
+
+
+## EMD
+
+### Load Data and Models
+
+```{r}
+
+df_emd_sequential_vision =
+  read.csv("../python/inference/model_performance/top_models/sequential_top_vision_emd.csv") %>%
+  mutate(model = "sequential",
+         condition = "vision")
+df_emd_sequential_audio = 
+  read.csv("../python/inference/model_performance/top_models/sequential_top_audio_emd.csv") %>%
+  mutate(model = "sequential",
+         condition = "audio")
+df_emd_sequential_occluded = 
+  read.csv("../python/inference/model_performance/top_models/sequential_top_occluded_emd.csv") %>%
+  mutate(model = "sequential",
+         condition = "occluded")
+
+df_emd_uniform_vision = read.csv("../python/inference/model_performance/top_models/uniform_top_vision_emd.csv") %>%
+  mutate(model = "uniform",
+          condition = "vision")
+df_emd_uniform_audio = read.csv("../python/inference/model_performance/top_models/uniform_top_audio_emd.csv") %>%
+  mutate(model = "uniform",
+          condition = "audio")
+df_emd_uniform_occluded = read.csv("../python/inference/model_performance/top_models/uniform_top_occluded_emd.csv") %>%
+  mutate(model = "uniform",
+          condition = "occluded")
+
+df_emd_visual_features_vision = read.csv("../python/inference/model_performance/emd/visual_features_vision_emd.csv") %>% 
+  mutate(model = "visual_features",
+         condition = "vision")
+df_emd_visual_features_audio = read.csv("../python/inference/model_performance/emd/visual_features_audio_emd.csv") %>% 
+  mutate(model = "visual_features",
+         condition = "audio")
+df_emd_visual_features_occluded = read.csv("../python/inference/model_performance/emd/visual_features_occluded_emd.csv") %>% 
+  mutate(model = "visual_features",
+         condition = "occluded")
+
+df_emd_baseline_vision = read.csv("../python/inference/model_performance/emd/baseline_uniform_vision_emd.csv") %>% 
+  mutate(model = "baseline",
+         condition = "vision")
+df_emd_baseline_audio = read.csv("../python/inference/model_performance/emd/baseline_uniform_audio_emd.csv") %>%
+  mutate(model = "baseline",
+         condition = "audio")
+df_emd_baseline_occluded = read.csv("../python/inference/model_performance/emd/baseline_uniform_occluded_emd.csv") %>%
+  mutate(model = "baseline",
+         condition = "occluded")
+
+df_emd_baseline = bind_rows(df_emd_baseline_vision,
+                                 df_emd_baseline_audio,
+                                 df_emd_baseline_occluded) %>%
+  group_by(condition) %>% 
+  summarise(mean_dist = mean(distance)) %>% 
+  mutate(condition = factor(condition,
+                            levels = c("vision", "audio", "occluded"),
+                            labels = c("No Sound + Ball Visible", "Sound + Ball Visible", "Sound + Ball Occluded"))) %>% 
+  arrange(condition)
+
+set.seed(5)
+
+df_emd = bind_rows(
+  df_emd_sequential_vision,
+  df_emd_sequential_audio,
+  df_emd_sequential_occluded,
+  df_emd_uniform_vision,
+  df_emd_uniform_audio,
+  df_emd_uniform_occluded,
+  df_emd_visual_features_vision,
+  df_emd_visual_features_audio,
+  df_emd_visual_features_occluded) %>%
+  mutate(x_pos = case_when(
+    model == "sequential" ~ 0,
+    model == "uniform" ~ 1,
+    model == "visual_features" ~ 2
+  ),
+  x_pos = x_pos + rnorm(nrow(.), sd = 0.1),
+         condition = factor(condition,
+                            levels=c("vision", "audio", "occluded"),
+                            labels=c("No Sound + Ball Visible", "Sound + Ball Visible", "Sound + Ball Occluded")),
+         highlight = trial == 20,
+         x_pos = ifelse(model == "sequential" & highlight, 0, x_pos),
+         x_pos = ifelse(model == "uniform" & highlight, 1, x_pos),
+         x_pos = ifelse(model == "visual_features" & highlight, 2, x_pos),
+         model = factor(model,
+                        levels=c("sequential", "uniform", "visual_features"),
+                        labels=c(0,1,2)),
+         model = as.numeric(as.character(model)))
+
+df_highlight = df_emd %>% 
+  filter(highlight)
+
+df_label = data.frame(
+  x = -0.35,
+  y = 115,
+  label = "Baseline",
+  condition = "No Sound + Ball Visible"
+) %>% 
+  mutate(condition = factor(condition))
+
+```
+
+### Visualize EMD
+
+
+```{r fig.width=20, fig.height=8}
+
+ggplot(data=df_emd,
+       mapping = aes(x=model,
+                     y=distance)) +
+  geom_hline(data = df_emd_baseline,
+             mapping = aes(yintercept = mean_dist),
+             linetype = "dashed",
+             alpha=0.5) + 
+  stat_summary(fun = "mean",
+               geom = "bar",
+               fill = "wheat1",
+               color = "black",
+               width=0.8) +
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "linerange",
+               color = "black") +
+  geom_point(mapping = aes(x=x_pos),
+             alpha=0.1) +
+  geom_point(data = df_highlight,
+             mapping = aes(x = x_pos),
+             size = 2) +
+  geom_text(data = df_label,
+            mapping = aes(x = x,
+                          y = y,
+                          label = label),
+            inherit.aes = FALSE,
+            hjust = 0,
+            vjust = 0,
+            size = 6) +
+  facet_wrap2(~condition,
+              ncol=3,
+              strip = strip_themed(
+                background_x = list(
+                  element_rect(fill = condition_colors[1]),
+                  element_rect(fill = condition_colors[2]),
+                  element_rect(fill = condition_colors[3])
+                ))) +
+  scale_x_continuous(breaks = c(0,1,2),
+                     labels = c("Sequential\nSampler", "Uniform\nSampler", "Visual\nFeatures")) +
+  scale_y_continuous(breaks = c(50, 100, 150)) + 
+  labs(x = "Model",
+       y = "Earth Mover's Distance") +
+  theme(axis.text.x = element_text(size = 22),
+        axis.text.y = element_text(size = 22),
+        axis.title.x = element_text(size = 26,
+                                    margin = margin(t=15)),
+        axis.title.y = element_text(size = 26),
+        strip.text = element_text(size = 26),
+        panel.spacing = unit(2, "cm"))
+
+ggsave("figures/emd.pdf",
+       width=20,
+       height=8)
+
+```
+
+
+```{r}
+df_emd %>% 
+  group_by(model, condition) %>% 
+  summarize(mean_distance = round(mean(distance), 2))
+```
+
+```{r}
+sessionInfo()
+```
+
