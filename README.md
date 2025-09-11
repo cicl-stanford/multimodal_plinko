@@ -1,4 +1,4 @@
-# Project name
+# Multimodal inference through mental simulation
 
 **Contents**:
 - [Introduction](#introduction)
