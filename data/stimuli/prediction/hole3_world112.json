@@ -1,0 +1,112 @@
+{
+  "data": {
+    "ball": [
+      {
+        "y": 600, 
+        "x": 521.4285714285714
+      }
+    ]
+  }, 
+  "config": {
+    "ball_friction": 0.9, 
+    "n_subholes": 10, 
+    "ground_y": 95.0, 
+    "height": 500, 
+    "wall_elasticity": 0.5, 
+    "hole_positions": [
+      178.57142857142858, 
+      350, 
+      521.4285714285714
+    ], 
+    "ball_elasticity": 0.9, 
+    "ball_mass": 10, 
+    "gravity": -1500, 
+    "width": 600, 
+    "med": 350, 
+    "ball_initial_position": {
+      "y": 625.0, 
+      "x": 350.8888888888889
+    }, 
+    "obstacle_circle_radius": 40, 
+    "screen_size": {
+      "width": 700, 
+      "height": 700
+    }, 
+    "dt": 0.016666666666666666, 
+    "hole_width": 60, 
+    "shape_positions": [
+      {
+        "y": 475.0, 
+        "x": 350
+      }, 
+      {
+        "y": 350, 
+        "x": 521.4285714285714
+      }, 
+      {
+        "y": 225.0, 
+        "x": 350
+      }, 
+      {
+        "y": 225.0, 
+        "x": 521.4285714285714
+      }, 
+      {
+        "y": 350, 
+        "x": 350
+      }, 
+      {
+        "y": 350, 
+        "x": 178.57142857142858
+      }, 
+      {
+        "y": 225.0, 
+        "x": 178.57142857142858
+      }, 
+      {
+        "y": 475.0, 
+        "x": 521.4285714285714
+      }, 
+      {
+        "y": 475.0, 
+        "x": 178.57142857142858
+      }
+    ], 
+    "obstacles": {
+      "pentagon": {
+        "n_sides": 5, 
+        "position": {
+          "y": 223.0, 
+          "x": 347
+        }, 
+        "rotation": 1.8846284267905704, 
+        "material": "wood", 
+        "size": 50
+      }, 
+      "triangle": {
+        "n_sides": 3, 
+        "position": {
+          "y": 346, 
+          "x": 518.4285714285714
+        }, 
+        "rotation": 5.214097254617469, 
+        "material": "wood", 
+        "size": 50
+      }, 
+      "rectangle": {
+        "n_sides": 4, 
+        "position": {
+          "y": 474.0, 
+          "x": 341
+        }, 
+        "rotation": 5.004242839398122, 
+        "material": "wood", 
+        "size": 50
+      }
+    }, 
+    "wall_friction": 0.9, 
+    "ground_friction": 2, 
+    "ground_elasticity": 0, 
+    "ball_radius": 25
+  }
+}
