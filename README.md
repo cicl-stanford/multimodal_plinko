@@ -1,5 +1,7 @@
 # Multimodal inference through mental simulation
 
+This repository contains the materials for ["Multimodal inference through mental simulation"](https://osf.io/preprints/psyarxiv/x2tj9) by Ari Beller, Yingchen Xu, Max Siegel, Satchel Grant, Alan Brown, Jan-Philipp Fränken, Joshua B. Tenenbaum, Scott W. Linderman, and Tobias Gerstenberg. 
+
 **Contents**:
 - [Introduction](#introduction)
 - [Repository structure](#repository-structure)
